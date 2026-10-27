@@ -31,3 +31,9 @@ Complaint email dispatch is disabled until a dedicated verified Hisaab sender is
 ## Deployment
 
 Target: Supabase in the separate Hisaab organisation and Netlify frontend; intended domain `adiram.me`. The hosted Supabase database is configured and verified. Delivery order is implementation and validation, GitHub upload and passing CI, then repository-connected Netlify staging. Direct-folder deployment is disabled. Netlify deployment and DNS cutover have not happened. Do not activate paid plans, change DNS, enable public release or populate unverified records as part of routine development.
+
+## Open-source license
+
+Hisaab’s original source code and project documentation are licensed under the [MIT License](LICENSE). You can use, modify, and redistribute them, including commercially, while preserving the copyright and license notice.
+
+Original code and documentation contributions are submitted under the MIT License unless explicitly agreed otherwise. Government records, datasets, maps, photographs, dependencies, and other third-party material retain their own terms and attribution requirements. See [licensing details](LICENSING.md).
