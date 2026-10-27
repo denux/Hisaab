@@ -8,3 +8,7 @@ directory = "netlify/functions"
 for = "/api/v1/reports*"
 [headers.values]
 Cache-Control = "private, no-store"
+[[headers]]
+for = "/geography/*"
+[headers.values]
+Cache-Control = "public, max-age=86400"
