@@ -1,0 +1,53 @@
+{
+  "version": "hisaab-map-overview/1",
+  "count": 812976,
+  "sourceKey": "74b03a6c58061190030eb674b30b86d6d4e88a67dfcb8841aec4df379b0a168f",
+  "edition": "d6ef186dbc4cccd4",
+  "minDetailZoom": 6,
+  "maxOverviewZoom": 5,
+  "urlTemplate": "/geography/overview/d6ef186dbc4cccd4/z{z}.geojson",
+  "files": [
+    {
+      "zoom": 0,
+      "features": 2,
+      "gzipBytes": 444,
+      "sha256": "dd689cff14dfc6f706758649fbc1f4734e4539b456c6b4e31a9cba60e0dbd6c6",
+      "bytes": 752
+    },
+    {
+      "zoom": 1,
+      "features": 4,
+      "gzipBytes": 562,
+      "sha256": "e7758ca72f339eece2c06e1b5e541a6aa191d4805841bf45a7612481c4b72f0a",
+      "bytes": 1274
+    },
+    {
+      "zoom": 2,
+      "features": 10,
+      "gzipBytes": 966,
+      "sha256": "bacbed4b5563f5b8e2c8df488f90a3755b878ce2d44334d2578265a3fd974b33",
+      "bytes": 2830
+    },
+    {
+      "zoom": 3,
+      "features": 24,
+      "gzipBytes": 1869,
+      "sha256": "cf62e8e673c958bc78d432926c03923ff35ea87c08343277be6a921f72f89d53",
+      "bytes": 6506
+    },
+    {
+      "zoom": 4,
+      "features": 67,
+      "gzipBytes": 4643,
+      "sha256": "bb9e4da2cbbdf90d9aa2adc7963f69359bc8c37e78b602860d6b49656431fecc",
+      "bytes": 17854
+    },
+    {
+      "zoom": 5,
+      "features": 208,
+      "gzipBytes": 13469,
+      "sha256": "503bf8854e69c3d534f05308ea5e621d059f8093d5e6d827dbe0cbe937134ac8",
+      "bytes": 54528
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 [build]
 command = "npm run build"
+ignore = "node scripts/netlify-build-ignore.mjs"
 [build.environment]
 NODE_VERSION = "24"
 [functions]
