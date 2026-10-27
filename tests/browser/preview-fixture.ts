@@ -5,7 +5,7 @@ import {test as base, expect} from '@playwright/test';
 export const test = base.extend<{acknowledgedPreview: void}>({
  acknowledgedPreview: [async ({context}, use) => {
   await context.addInitScript(() => {
-   try { sessionStorage.setItem('hisaab-public-preview-2026-10-25', 'understood'); } catch {}
+   try { sessionStorage.setItem('hisaab-public-preview-project-data-2026-10-26', 'understood'); } catch {}
   });
   await use();
  }, {auto: true}],

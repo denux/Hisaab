@@ -24,7 +24,10 @@ export function PublicPreviewGate({children,assetRecordTotal=812_976,projectData
   function acknowledge() {
     try { sessionStorage.setItem(acknowledgementKey, 'understood'); } catch {}
     setAcknowledged(true);
-    requestAnimationFrame(() => content.current?.querySelector<HTMLElement>('a, button')?.focus());
+    requestAnimationFrame(() => {
+      const target=content.current?.querySelector<HTMLElement>('a, button')??content.current;
+      target?.focus();
+    });
   }
 
   function containFocus(event: KeyboardEvent<HTMLElement>) {
@@ -40,7 +43,7 @@ export function PublicPreviewGate({children,assetRecordTotal=812_976,projectData
   }
 
   return <>
-    <div ref={content} inert={!acknowledged}>{children}</div>
+    <div ref={content} tabIndex={-1} inert={!acknowledged}>{acknowledged ? children : null}</div>
     {!acknowledged && <div className={styles.backdrop}>
       <section ref={card} className={styles.card} role="dialog" aria-modal="true" aria-labelledby="preview-heading" aria-describedby="preview-intro" onKeyDown={containFocus}>
         <span className={styles.label}>HISAAB · PUBLIC PREVIEW</span>

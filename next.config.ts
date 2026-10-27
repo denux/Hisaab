@@ -10,7 +10,7 @@ const config: NextConfig = {
   outputFileTracingExcludes: {'/*':['./data/acquisition/**/*','./data/originals/**/*','./.hisaab/**/*','./tmp/**/*','./.env*']},
   env:{NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN:mapToken},
   async rewrites(){return [{source:'/state/:code',destination:'/'},{source:'/asset/:id',destination:'/'}];},
-  async headers() { return [{ source: '/:path*', headers: [
+  async headers() { return [{source:'/geography/:path*',headers:[{key:'Cache-Control',value:'public, max-age=86400'}]}, { source: '/:path*', headers: [
     {key:'X-Content-Type-Options',value:'nosniff'},
     {key:'Referrer-Policy',value:'no-referrer'},
     {key:'Permissions-Policy',value:'camera=(self), microphone=(), geolocation=(self)'},

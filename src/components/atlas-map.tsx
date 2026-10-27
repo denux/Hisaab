@@ -12,6 +12,7 @@ import {AssetMapConnection} from './asset-map-connection';
 import {useLocationPreview} from './use-location-preview';
 import type {MapPreview} from './asset-visual';
 import {silhouettePath} from '@/lib/map-silhouette';
+import {loadMapBoundary} from '@/lib/map-boundaries';
 
 export type MapAction={sequence:number;type:'in'|'out'|'north'|'india'|'terrain'|'satellite'|'streets'|'day'|'dusk'|'night'|'perspective'};
 export function AtlasMap({exploring,states,state,year,purpose,query,layers,onState,onAsset,onWork,onExplore,onViewport,action,asset,work,locationSelected=false,theme='dark',onPreview,onMapReady,onProjectStatus,onAssetStatus,cameraControlled=false,contentMode=false,contentFrame='screen'}:{exploring:boolean;states:FundingOverview['states'];state:string|null;year:string;purpose:string;query:string;layers:{funding:boolean;projects:boolean;historical:boolean};onState:(code:string)=>void;onAsset:(asset:AssetDetail)=>void;onWork:(work:Work)=>void;onExplore:()=>void;onViewport:(bounds:number[])=>void;action:MapAction|null;asset:AssetDetail|null;work:Work|null;locationSelected?:boolean;theme?:'light'|'dark';onPreview:(p:MapPreview|null)=>void;onMapReady?:(m:mapboxgl.Map|null)=>void;onProjectStatus?:(status:string)=>void;onAssetStatus?:(status:string)=>void;cameraControlled?:boolean;contentMode?:boolean;contentFrame?:string}) {
@@ -29,8 +30,9 @@ export function AtlasMap({exploring,states,state,year,purpose,query,layers,onSta
    m.on('load',()=>{
     // Clip imagery to India while the photographic backdrop stays screen-fixed.
     // Map controls and attribution remain outside the clipped canvas.
-    void fetch('/geography/india-display.geojson').then(r=>r.json()).then((geo:GeoJSON.FeatureCollection)=>{
+    void loadMapBoundary('india').then((geo)=>{
      if(map.current!==m)return;
+     (m.getSource('hisaab-india-display') as mapboxgl.GeoJSONSource).setData(geo);
      const outline=geo.features.find(f=>f.properties?.role==='outline');
      if(outline?.geometry.type!=='MultiPolygon')throw new Error('India outline unavailable');
      // Project the boundary with the exact matrix used for this frame. Clip
@@ -44,8 +46,8 @@ export function AtlasMap({exploring,states,state,year,purpose,query,layers,onSta
      }});
 
     }).catch(()=>{if(map.current===m)setError('The India boundary could not load. Reload the map or use the state and project lists.');});
+    m.addSource('hisaab-india-display',{type:'geojson',data:{type:'FeatureCollection',features:[]},attribution:'<a href="https://surveyofindia.gov.in/pages/outline-maps-of-india">India outline: Survey of India</a>'});
     m.addSource('hisaab-dem',{type:'raster-dem',url:'mapbox://mapbox.mapbox-terrain-dem-v1',tileSize:512,maxzoom:14});m.setTerrain({source:'hisaab-dem',exaggeration:1});
-    m.addSource('hisaab-india-display',{type:'geojson',data:'/geography/india-display.geojson',attribution:'<a href="https://surveyofindia.gov.in/pages/outline-maps-of-india">India outline: Survey of India</a>'});
     m.addLayer({id:'hisaab-india-clip',type:'clip',source:'hisaab-india-display',filter:['==',['get','role'],'outside'],layout:{'clip-layer-types':['model','symbol'],'clip-layer-scope':['basemap']}});
     m.addLayer({id:'hisaab-outside-india',type:'fill',source:'hisaab-india-display',filter:['==',['get','role'],'outside'],paint:{'fill-color':'#081923','fill-opacity':0,'fill-emissive-strength':1}});
     m.addLayer({id:'hisaab-india-outline',type:'line',source:'hisaab-india-display',filter:['==',['get','role'],'outline'],paint:{'line-color':'#d5e4cd','line-width':1,'line-opacity':.6,'line-emissive-strength':1}});
@@ -71,7 +73,7 @@ export function AtlasMap({exploring,states,state,year,purpose,query,layers,onSta
  },[ready,requestedStyle]);
  const previousFrame=useRef(contentFrame);
  useEffect(()=>{const changed=previousFrame.current!==contentFrame;previousFrame.current=contentFrame;if(changed&&contentMode&&ready&&map.current&&!controlled.current&&!asset&&!work&&!state)map.current.fitBounds([[67.8,6.5],[97.5,37.2]],{padding:55,pitch:0,bearing:0,duration:0});},[contentFrame,contentMode,ready,asset,work,state]);
- useEffect(()=>{if(!ready||!state||!map.current||asset||work||locationSelected||controlled.current)return;const c=new AbortController();void fetch('/geography/funding-states.geojson',{signal:c.signal}).then(r=>r.json()).then((geo:GeoJSON.FeatureCollection)=>{if(c.signal.aborted||!map.current)return;const feature=geo.features.find(f=>f.properties?.code===state);if(!feature)return;const bounds=[Infinity,Infinity,-Infinity,-Infinity];const walk=(v:unknown)=>{if(Array.isArray(v)){if(typeof v[0]==='number'&&typeof v[1]==='number'){bounds[0]=Math.min(bounds[0],v[0]);bounds[1]=Math.min(bounds[1],v[1]);bounds[2]=Math.max(bounds[2],v[0]);bounds[3]=Math.max(bounds[3],v[1]);}else v.forEach(walk);}};if('coordinates' in feature.geometry)walk(feature.geometry.coordinates);if(!bounds.every(Number.isFinite))return;map.current.fitBounds([[bounds[0],bounds[1]],[bounds[2],bounds[3]]],{padding:{left:innerWidth>900?470:70,right:80,top:120,bottom:innerWidth<760?Math.min(innerHeight*.38,300):80},pitch:25,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:cinematic.current?2200:850});}).catch(()=>setStatus('State boundary focus is unavailable; select a project from the list.'));return()=>c.abort();},[state,ready,asset,work,locationSelected]);
+ useEffect(()=>{if(!ready||!state||!map.current||asset||work||locationSelected||controlled.current)return;const c=new AbortController();void loadMapBoundary('states').then((geo)=>{if(c.signal.aborted||!map.current)return;const feature=geo.features.find(f=>f.properties?.code===state);if(!feature)return;const bounds=[Infinity,Infinity,-Infinity,-Infinity];const walk=(v:unknown)=>{if(Array.isArray(v)){if(typeof v[0]==='number'&&typeof v[1]==='number'){bounds[0]=Math.min(bounds[0],v[0]);bounds[1]=Math.min(bounds[1],v[1]);bounds[2]=Math.max(bounds[2],v[0]);bounds[3]=Math.max(bounds[3],v[1]);}else v.forEach(walk);}};if('coordinates' in feature.geometry)walk(feature.geometry.coordinates);if(!bounds.every(Number.isFinite))return;map.current.fitBounds([[bounds[0],bounds[1]],[bounds[2],bounds[3]]],{padding:{left:innerWidth>900?470:70,right:80,top:120,bottom:innerWidth<760?Math.min(innerHeight*.38,300):80},pitch:25,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:cinematic.current?2200:850});}).catch(()=>setStatus('State boundary focus is unavailable; select a project from the list.'));return()=>c.abort();},[state,ready,asset,work,locationSelected]);
  useEffect(()=>{if(!ready||!map.current||controlled.current)return;const location=work?.location??asset?.location;if(!location)return;map.current.flyTo({center:location,zoom:16.5,pitch:55,padding:{left:innerWidth>760?80:30,right:innerWidth>1050?550:innerWidth>760?440:30,top:innerWidth<760?190:100,bottom:innerWidth<760?Math.min(innerHeight*.52,470):70},duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:cinematic.current?2200:850});},[asset,work,ready,contentFrame]);
  useEffect(()=>{
   const m=map.current;if(!m||!ready)return;const geometry=asset?.buildingFootprint??asset?.geometry??(work?.location?{type:'Point' as const,coordinates:work.location}:null);if(!geometry)return;

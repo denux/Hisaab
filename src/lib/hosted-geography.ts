@@ -21,4 +21,4 @@ export async function hostedAssetTile(z:number,x:number,y:number,query:string,ki
   const limit=32*1024*1024;if(tile.bytes.byteLength<=limit){while(cachedTileBytes+tile.bytes.byteLength>limit&&tileCache.size){const first=tileCache.keys().next().value!;cachedTileBytes-=tileCache.get(first)!.bytes.byteLength;tileCache.delete(first);}tileCache.set(key,tile);cachedTileBytes+=tile.bytes.byteLength;}return tile;
  }).finally(()=>tileLoads.delete(key));tileLoads.set(key,loading);return loading;
 }
-export async function geographyStatus(){const m=await manifest();return {count:m.count,maxzoom:m.maxzoom,delivery:'immutable_pmtiles_and_range_index',shards:m.archives.map(a=>({id:a.file.replace('.pmtiles',''),kind:a.kind})),spendingLinked:false};}
+export async function geographyStatus(){const m=await manifest();return {count:m.count,maxzoom:m.maxzoom,edition:createHash('sha256').update(base()).digest('hex').slice(0,12),delivery:'immutable_pmtiles_and_range_index',shards:m.archives.map(a=>({id:a.file.replace('.pmtiles',''),kind:a.kind})),spendingLinked:false};}
