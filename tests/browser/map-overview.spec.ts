@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 const overview=JSON.parse(readFileSync('data/map-overview.json','utf8'));
 
 test('country summaries defer individual tiles, expand on click, and preserve detailed access',async({page})=>{
+ test.skip(Boolean(process.env.CI)&&!process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,'This renderer check needs a public map token; token-free fallback journeys run separately.');
  const tileRequests:string[]=[],metadataRequests:string[]=[],pageErrors:string[]=[];
  page.on('pageerror',error=>pageErrors.push(error.message));
  page.on('request',request=>{if(request.url().includes('/asset-tiles/'))tileRequests.push(request.url());if(request.url().endsWith('/api/v1/geography'))metadataRequests.push(request.url());});
