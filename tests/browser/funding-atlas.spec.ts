@@ -1,6 +1,6 @@
 import {test,expect} from './preview-fixture';
-import {stubFundingInCI} from './atlas-fixtures';
-test.beforeEach(async({page})=>stubFundingInCI(page));
+import {stubFunding} from './atlas-fixtures';
+test.beforeEach(async({page})=>stubFunding(page));
 test('clean India opens into a state card with independent historical and funding layers',async({page},info)=>{
  await page.goto('/');await expect(page.locator('.atlas-shell')).toHaveAttribute('data-exploring','false');await expect(page.getByLabel('Financial year',{exact:true})).toHaveCount(0);await expect(page.locator('.atlas-state-card')).toHaveCount(0);
  await page.getByRole('button',{name:'Explore India',exact:true}).click();await expect(page.getByLabel('Financial year',{exact:true}).locator('option')).toHaveCount(11);await expect(page.locator('.atlas-state-list>button')).toHaveCount(36);
@@ -10,7 +10,7 @@ test('clean India opens into a state card with independent historical and fundin
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:`tmp/screenshots/atlas-state-${info.project.name}.png`});
 });
 test('published funding opens an evidence panel and keeps programme sources in the app',async({page})=>{
- await page.goto('/state/27');const record=page.locator('.atlas-programme-row').filter({hasText:'State Disaster Response Fund'});await expect(record).toBeVisible({timeout:20000});await record.click();const dialog=page.getByRole('dialog',{name:'Programme evidence'});await expect(dialog).toContainText('₹4288.50 crore');await expect(dialog).toContainText('Funding received');await expect(dialog.getByRole('link',{name:'Original document'})).toHaveAttribute('href',process.env.CI?/example.invalid/:/pib.gov.in/);await expect(dialog.getByRole('button',{name:'Close evidence panel'})).toBeFocused();await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);await expect(record).toBeFocused();
+ await page.goto('/state/27');const record=page.locator('.atlas-programme-row').filter({hasText:'State Disaster Response Fund'});await expect(record).toBeVisible({timeout:20000});await record.click();const dialog=page.getByRole('dialog',{name:'Programme evidence'});await expect(dialog).toContainText('₹4288.50 crore');await expect(dialog).toContainText('Funding received');await expect(dialog.getByRole('link',{name:'Original document'})).toHaveAttribute('href',/example.invalid/);await expect(dialog.getByRole('button',{name:'Close evidence panel'})).toBeFocused();await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);await expect(record).toBeFocused();
 });
 test('funding privacy and failure semantics remain explicit',async({request})=>{
  expect((await request.get('/api/v1/funding?year=2015-2016')).status()).toBe(400);const response=await request.get('/api/v1/development');expect(response.status()).toBe(200);const data=await response.json();expect(data.coverage.complete).toBe(false);expect(data.states).toHaveLength(36);expect(data.states.every((s:{development:{combinedAmountRupees:string|null}})=>s.development.combinedAmountRupees===null||typeof s.development.combinedAmountRupees==='string')).toBe(true);

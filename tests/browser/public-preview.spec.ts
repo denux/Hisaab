@@ -1,4 +1,6 @@
 import {test, expect} from '@playwright/test';
+import {stubBrowserMap} from './map-fixtures';
+test.beforeEach(async({page})=>stubBrowserMap(page));
 
 test('first visit defers map requests until entry and remembers this session', async ({page}) => {
  const mapRequests:string[]=[];

@@ -17,8 +17,8 @@ async function openManualStudio(page:Page){
 test.use({channel:process.env.HISAAB_BROWSER_CHANNEL});
 test.setTimeout(90000);
 test('card presets frame source sections, preserve unknowns and replay saved framing',async({page})=>{
- await page.goto('/asset/f822c8e8a8d3fb70e9b4%3A95317?state=9&explore=1');await page.getByRole('heading',{name:'Panchayat HQ',exact:true}).waitFor();const studio=await openManualStudio(page);
- await expect(studio.getByLabel('Card shot presets').locator('div > button')).toHaveCount(9);
+ await page.goto('/asset/browser-historical-fixture?explore=1');await page.getByRole('heading',{name:'Browser archived facility',exact:true}).waitFor();const studio=await openManualStudio(page);
+ await expect(studio.getByLabel('Card shot presets').locator('div > button')).toHaveCount(10);
  await studio.getByLabel('Wait for imagery',{exact:true}).uncheck();await studio.getByRole('button',{name:'Money close-up',exact:true}).click();await expect(page.locator('.atlas-shell')).toHaveAttribute('data-card-focus','money');await expect(page.locator('.atlas-receipt-money strong')).toHaveText(['—','—','—']);
  await studio.getByRole('button',{name:'Payment detail',exact:true}).click();await expect(studio.getByText(/This record has no individual payment details/)).toBeVisible();
  await studio.getByRole('button',{name:'Source proof',exact:true}).click();await expect(page.locator('.atlas-location-source')).toHaveAttribute('open','');await expect.poll(()=>page.getByLabel('Project receipt',{exact:true}).evaluate(el=>el.scrollTop)).toBeGreaterThan(0);
@@ -58,7 +58,7 @@ test('guided showcases play map-only sequences and stop cleanly',async({page})=>
 });
 
 test('saved asset shots restore the source card and receipt reveal remains interruptible',async({page})=>{
- await page.goto('/asset/f822c8e8a8d3fb70e9b4%3A95317?state=9&explore=1');await page.getByRole('heading',{name:'Panchayat HQ',exact:true}).waitFor();
+ await page.goto('/asset/browser-historical-fixture?explore=1');await page.getByRole('heading',{name:'Browser archived facility',exact:true}).waitFor();
  const studio=await openManualStudio(page);
  await studio.getByLabel('Wait for imagery',{exact:true}).uncheck();await studio.getByLabel('Shot duration in seconds').fill('2');
  await studio.getByRole('button',{name:'Receipt reveal',exact:true}).click();await expect(page.locator('.atlas-shell')).toHaveAttribute('data-content-card','hide');
@@ -67,6 +67,6 @@ test('saved asset shots restore the source card and receipt reveal remains inter
  await studio.getByRole('button',{name:'Save current camera',exact:true}).click();await studio.getByLabel('Shot 1 movement seconds').fill('.5');await studio.getByLabel('Shot 1 hold seconds').fill('0');
  // Restore a saved source selection after navigating away through the real app.
  await studio.getByRole('button',{name:'Hide content controls',exact:true}).click();await page.getByRole('button',{name:'Back from project',exact:true}).click();await page.keyboard.press('Escape');await expect(page.getByLabel('Project receipt',{exact:true})).toBeHidden();
- await studio.getByRole('button',{name:'Preview shot 1',exact:true}).click();await expect(page.getByRole('heading',{name:'Panchayat HQ',exact:true})).toBeVisible();await expect(studio.getByRole('status')).toHaveText('Sequence complete',{timeout:15000});
+ await studio.getByRole('button',{name:'Preview shot 1',exact:true}).click();await expect(page.getByRole('heading',{name:'Browser archived facility',exact:true})).toBeVisible();await expect(studio.getByRole('status')).toHaveText('Sequence complete',{timeout:15000});
  await expect(page.getByLabel('Project receipt',{exact:true}).getByText('Funding not linked',{exact:true})).toBeVisible();
 });

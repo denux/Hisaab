@@ -20,8 +20,8 @@ test('source photos take priority, failed photos fall back, and demo figures sta
 
 test('recorded locations get a map context preview and a moving connection without a fabricated footprint',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('/asset/f822c8e8a8d3fb70e9b4%3A95317?state=9&explore=1');
- const card=page.getByLabel('Project receipt',{exact:true});await expect(card.getByRole('heading',{name:'Panchayat HQ',exact:true})).toBeVisible();
+ await page.goto('/asset/browser-historical-fixture?explore=1');
+ const card=page.getByLabel('Project receipt',{exact:true});await expect(card.getByRole('heading',{name:'Browser archived facility',exact:true})).toBeVisible();
  await expect(card.locator('.asset-visual')).toHaveAttribute('data-image-basis','map_context',{timeout:45000});
  await expect(card.getByText('Funding not linked',{exact:true})).toBeVisible();
  const link=page.locator('.asset-map-connection');await expect(link).toHaveCSS('opacity','1');
