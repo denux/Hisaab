@@ -13,7 +13,6 @@ import {CitizenForm,Tracking,useModalFocus} from './hisaab-app';
 import {SpendingExplorer} from './spending-explorer';
 import {AssetVisual,AssetEvidenceSummary,type MapPreview} from './asset-visual';
 import type mapboxgl from 'mapbox-gl';
-import {ContentStudio} from './content-studio';
 import {ContentCardFocus} from './content-card-focus';
 import {FilmCapture} from './film-capture';
 import type {ContentPresentation,RestoreContext} from '@/lib/content-mode';
@@ -26,6 +25,8 @@ import {kebaliAssetId,kebaliCardDemo} from '@/lib/kebali-card-demo';
 import {DemoPlaceContext} from './demo-place-context';
 import {JurisdictionSourceInventory} from './jurisdiction-source-inventory';
 const AtlasMap=dynamic(()=>import('./atlas-map').then(m=>m.AtlasMap),{ssr:false,loading:()=> <div className="atlas-map-loading">Preparing India’s landscape…</div>});
+// The content studio is a creator tool; keep it and its schemas off the public atlas chunk.
+const ContentStudio=dynamic(()=>import('./content-studio').then(m=>m.ContentStudio),{ssr:false});
 const measures={allocated:'Allocated',released:'Released',reported_spent:'Reported spent'};
 const origins={union:'Union government',state:'State government',joint:'Joint funding',local:'Local government'};
 const projectPurpose=(p:string)=>p==='all'?'All':({transport:'Roads',education:'Schools & education',health:'Hospitals & health',infrastructure:'Buildings'}[p]??'No matching project category');
